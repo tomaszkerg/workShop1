@@ -12,41 +12,48 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-public class workshop1 {
+public class Workshop1 {
+    static String file = "tasks.csv";
+
 public static void main(String[] args) {
     try {
-        getTab("tasks.csv");
+        createTab(file);
     }catch (IndexOutOfBoundsException e){
-        System.out.println("ten plik jest pusty");
+        System.out.println("ten plik jest pusty: " + file);
     }
     options();
 
 }
 
-public static String[][] getTab(String fileName){
+
+
+public static String[][] createTab(String fileName){
     Path filePath = Paths.get(fileName);
     String[][] fileTab = null;
     try {
         List<String> fileList = Files.readAllLines(filePath);
-        fileTab = new String[fileList.size()][fileList.get(0).split(",").length];
-        for (int i = 0; i < fileList.toArray().length; i++) {
-            for (int j = 0; j < fileList.get(0).split(",").length; j++) {
+        int rowsLength = fileList.size();
+        int columnsLength = fileList.get(0).split(",").length;
+
+        fileTab = new String[rowsLength][columnsLength];
+        for (int i = 0; i < fileList.size(); i++) {
+            for (int j = 0; j < columnsLength; j++) {
                 fileTab[i][j]=fileList.get(i).split(",")[j];
             }
         }
     }catch(IOException e){
-        System.out.println(ConsoleColors.CYAN_BOLD_BRIGHT + "there is no file like that :(");
-        resetC();
+        System.out.println(ConsoleColors.CYAN_BOLD_BRIGHT + "there is no file " + file);
+        resetColor();
     }
 
     return fileTab;
 
 }
-public static void list() {
-    for (int i = 0; i < getTab("tasks.csv").length; i++) {
+public static void showTab() {
+    for (int i = 0; i < createTab("tasks.csv").length; i++) {
         System.out.print(i+". ");
-        for (int j = 0; j < getTab("tasks.csv")[i].length; j++) {
-            System.out.print(getTab("tasks.csv")[i][j]);
+        for (int j = 0; j < createTab("tasks.csv")[i].length; j++) {
+            System.out.print(createTab("tasks.csv")[i][j]);
         }
         System.out.println();
     }
@@ -54,9 +61,9 @@ public static void list() {
 public static void remove(){
     try {
         Scanner scan = new Scanner(System.in);
-        String[][] fileTab = getTab("tasks.csv");
+        String[][] fileTab = createTab("tasks.csv");
         System.out.println(ConsoleColors.CYAN+"\nwpisz back by powrócić");
-        resetC();
+        resetColor();
         System.out.println("podaj niżej numer elementu do usunięcia");
         String remove = scan.nextLine();
         if (NumberUtils.isParsable(remove) && Integer.parseInt(remove)>=0) {
@@ -65,7 +72,7 @@ public static void remove(){
             options();
         } else {
             System.out.println(ConsoleColors.RED+"musisz podać liczbę wieksza badz rowna 0");
-            resetC();
+            resetColor();
             remove();
         }
         FileWriter myWriter = new FileWriter("tasks.csv");
@@ -100,7 +107,7 @@ public static void add() {
 public static void options(){
     Scanner scanCases = new Scanner(System.in);
     System.out.println(ConsoleColors.BLUE + "Wybierz proszę opcję z listy poniżej");
-    resetC();
+    resetColor();
     System.out.println("list");
     System.out.println("add");
     System.out.println("remove");
@@ -108,7 +115,7 @@ public static void options(){
     switch (scanCases.nextLine()) {
         case "exit":
             System.out.println(ConsoleColors.RED + "bye bye");
-            resetC();
+            resetColor();
             System.exit(0);
         case "add":
             add();
@@ -117,15 +124,15 @@ public static void options(){
             remove();
             options();
         case "list":
-            list();
+            showTab();
             options();
         default:
             System.out.println("wybierz poprawną opcję");
     }
 }
 
-    public static void resetC() {
-    System.out.print(ConsoleColors.RESET);
+    public static void resetColor() {
+        System.out.print(ConsoleColors.RESET);
     }
 
 }
